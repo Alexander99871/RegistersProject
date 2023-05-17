@@ -1,0 +1,43 @@
+{
+  "registers": [
+    {
+      "name": "REG_A",
+      "address": 4096,
+      "RAW_value": 12345,
+      "fields": [
+        {
+          "name": "FIELD_1",
+          "mask": 15124,
+          "description": "Description of Field 1"
+        },
+        {
+          "name": "FIELD_2",
+          "mask": 48124,
+          "description": "Description of Field 2"
+        },
+        {
+          "name": "FIELD_3",
+          "mask": 191242,
+          "description": "Description of Field 3"
+        }
+      ]
+    },
+    {
+      "name": "REG_B",
+      "address": 8192,
+      "RAW_value": 67890,
+      "fields": [
+        {
+          "name": "FIELD_4",
+          "mask": 25125,
+          "description": "Description of Field 4"
+        },
+        {
+          "name": "FIELD_5",
+          "mask": 653280,
+          "description": "Description of Field 5"
+        }
+      ]
+    }
+  ]
+}

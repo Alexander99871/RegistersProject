@@ -3,7 +3,6 @@
     {
       "name": "REG_A",
       "address": 4096,
-      "RAW_value": 12345,
       "fields": [
         {
           "name": "FIELD_1",
@@ -25,7 +24,6 @@
     {
       "name": "REG_B",
       "address": 8192,
-      "RAW_value": 67890,
       "fields": [
         {
           "name": "FIELD_4",

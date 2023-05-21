@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <vector>
 #include <nlohmann/json.hpp>
+typedef unsigned int uint;
 
 using json = nlohmann::json;
 
@@ -15,7 +16,7 @@ struct Field {
 struct Register {
     std::string name;
     uint32_t address;
-    uint32_t RAW_value;
+    uint32_t RAW_value = 0;
     std::vector<Field> fields;
 };
 
@@ -28,8 +29,22 @@ static void from_json(const json& j, Field& field) {
 static void from_json(const json& j, Register& reg) {
     j.at("name").get_to(reg.name);
     j.at("address").get_to(reg.address);
-    j.at("RAW_value").get_to(reg.RAW_value);
     j.at("fields").get_to(reg.fields);
+}
+
+static uint count_trailing_zeros(uint32_t val) {
+    unsigned long shift = 0;
+    #ifdef GNUC
+    shift = __builtin_ctz(val);
+    #elif defined(_MSC_VER)
+    _BitScanForward(&shift, val);
+    #else
+    shift = 0;
+    while (((val >> shift) & 1) == 0) {
+        shift++;
+    }
+    #endif
+    return shift;
 }
 
 static std::vector<Register> parse_registers(const std::string& file_path) {
@@ -60,24 +75,12 @@ static void print_parsed_fields(const std::vector<Register>& registers) {
     for (const auto& reg : registers) {
         std::cout << "Register: " << reg.name << " (0x" << std::hex << reg.address << ")\n";
         std::cout << "RAW Value: 0x" << std::hex << reg.RAW_value << "\n";
-
         for (const auto& field : reg.fields) {
             uint32_t field_value = (reg.RAW_value & field.mask);
-            unsigned long shift;
-            #ifdef __GNUC__
-            shift = __builtin_ctz(field.mask);
-            #elif defined(_MSC_VER)
-            _BitScanForward(&shift, field.mask);
-            #else
-            shift = 0;
-            while (((field.mask >> shift) & 1) == 0) {
-                shift++;
-            }
-            #endif
+            unsigned long shift = count_trailing_zeros(field.mask);
             field_value >>= shift;
-            std::cout << "  " << field.name << ": 0x" << std::hex << field_value << " (" << field.description << ")\n";
+            std::cout << " " << field.name << ": 0x" << std::hex << field_value << " (" << field.description << ")\n";
         }
-
         std::cout << std::endl;
     }
 }
